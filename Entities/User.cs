@@ -12,6 +12,7 @@ public class User
     public string LastName { get; set; } = null!;
     [Required]
     public string Username { get; set; } = null!;
+    public string? Role { get; set; } = null!;
 
     [Required]
     [JsonIgnore]

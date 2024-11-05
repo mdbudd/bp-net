@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
-
 #nullable disable
 
 namespace WebApi.Migrations.SqliteMigrations
@@ -17,11 +16,22 @@ namespace WebApi.Migrations.SqliteMigrations
                     FirstName = table.Column<string>(type: "TEXT", nullable: true),
                     LastName = table.Column<string>(type: "TEXT", nullable: true),
                     Username = table.Column<string>(type: "TEXT", nullable: true),
+                    Role = table.Column<string>(type: "TEXT", nullable: true),
                     PasswordHash = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword("test");
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "FirstName", "LastName", "Username", "Role", "PasswordHash" },
+                values: new object[,]
+                {
+                    { 1, "Test", "User", "test", "super", passwordHash }
                 });
         }
 
