@@ -1,10 +1,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 EXPOSE 80
 WORKDIR /src
-COPY ["MyWebApp.csproj", "."]
-RUN dotnet restore "./MyWebApp.csproj"
+COPY ["WebApi.csproj", "."]
+RUN dotnet restore "./WebApi.csproj"
 RUN dotnet dev-certs https
 COPY . .
 WORKDIR "/src/."
 RUN sed -i 's/DEFAULT@SECLEVEL=2/DEFAULT@SECLEVEL=1/g' /etc/ssl/openssl.cnf
-ENTRYPOINT ["dotnet", "watch", "run", "--project", "MyWebApp.csproj", "--urls", "http://*:80;http://*:5069"]
+ENTRYPOINT ["dotnet", "watch", "run", "--project", "WebApi.csproj", "--urls", "http://*:80;http://*:5069"]

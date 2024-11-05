@@ -1,4 +1,4 @@
-﻿namespace MyWebApp.Data
+﻿namespace WebApi.Data
 {
     public class EntityType
     {

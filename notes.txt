@@ -1,0 +1,16 @@
+
+export PATH="$PATH:/root/.dotnet/tools"
+dotnet tool install --global dotnet-ef --version 6.0.6
+
+
+dotnet ef migrations add InitialCreate --context SqliteDataContext --output-dir Migrations/SqliteMigrations
+
+export ASPNETCORE_ENVIRONMENT=Production
+dotnet ef migrations add InitialCreate --context DataContext --output-dir Migrations/SqlServerMigrations
+
+{
+  "firstName": "Test",
+  "lastName": "User",
+  "username": "test",
+  "password": "****"
+}

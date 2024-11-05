@@ -1,8 +1,8 @@
-using MyWebApp.Models;
+using WebApi.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
-namespace MyWebApp.Services;
+namespace WebApi.Services;
 
 public class BooksService
 {

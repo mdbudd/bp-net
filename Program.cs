@@ -1,38 +1,49 @@
-using Microsoft.EntityFrameworkCore;
-using MyWebApp.Data;
-using MyWebApp.Models;
-using MyWebApp.Helpers;
-using MyWebApp.Services;
+﻿using Microsoft.EntityFrameworkCore;
+using WebApi.Authorization;
+using WebApi.Data;
+using WebApi.Helpers;
+using WebApi.Services;
+using WebApi.Models;
 using Microsoft.OpenApi.Models;
 using GraphQL;
 using GraphQL.Types;
 
 var builder = WebApplication.CreateBuilder(args);
-var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
-var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
 
-// Add services to the container.
-
-builder.Services.AddCors();
-builder.Services.AddRazorPages();
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(opt =>
+// add services to DI container
 {
-    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MyWebApp", Version = "v1" });
-    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Description = "Please enter token",
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        BearerFormat = "JWT",
-        Scheme = "bearer"
-    });
+    var services = builder.Services;
+    var env = builder.Environment;
 
-    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+    // use sql server db in production and sqlite db in development
+    if (env.IsProduction())
+        services.AddDbContext<DataContext>();
+    else
+        services.AddDbContext<DataContext>(); // using sql server for both as docker is running it.
+        // services.AddDbContext<DataContext, SqliteDataContext>();
+
+    // services.AddDbContext<ProjectContext>(options =>
+    //     options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectDb")));
+    services.AddCors();
+    services.AddControllers();
+
+    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+    services.AddEndpointsApiExplorer();
+    services.AddSwaggerGen(opt =>
     {
+        opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MyWebApp", Version = "v1" });
+        opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Description = "Please enter token",
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            BearerFormat = "JWT",
+            Scheme = "bearer"
+        });
+
+        opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
         {
             new OpenApiSecurityScheme
             {
@@ -44,58 +55,53 @@ builder.Services.AddSwaggerGen(opt =>
             },
             new string[]{}
         }
+        });
     });
-});
-builder.Services.AddDbContext<SalesContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SalesDb")));
-builder.Services.AddDbContext<ProjectContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectDb")));
-builder.Services.Configure<BookStoreDatabaseSettings>(
-    builder.Configuration.GetSection("BookStoreDatabase"));
-builder.Services.AddSingleton<BooksService>();
-// configure strongly typed settings object
-builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
-// configure DI for application services
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddSingleton<IEmployeeService, EmployeeService>();
-builder.Services.AddSingleton<EmployeeDetailsType>();
-builder.Services.AddSingleton<EmployeeQuery>();
-builder.Services.AddSingleton<ISchema, EmployeeDetailsSchema>();
-builder.Services.AddGraphQL(b => b
-    .AddAutoSchema<EmployeeQuery>()  // schema
-    .AddSystemTextJson());   // serializer
+
+    services.Configure<BookStoreDatabaseSettings>(
+        builder.Configuration.GetSection("BookStoreDatabase"));
+    services.AddSingleton<BooksService>();
+    // configure automapper with all automapper profiles from this assembly
+    services.AddAutoMapper(typeof(Program));
+
+    // configure strongly typed settings object
+    services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
+    // configure DI for application services
+    services.AddScoped<IJwtUtils, JwtUtils>();
+    services.AddScoped<IUserService, UserService>();
+}
 
 var app = builder.Build();
 
+// migrate any database changes on startup (includes initial db creation)
 using (var scope = app.Services.CreateScope())
 {
-    var salesContext = scope.ServiceProvider.GetRequiredService<SalesContext>();
-    salesContext.Database.EnsureCreated();
-    salesContext.Seed();
+    var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+    dataContext.Database.Migrate();
 }
 
-if (app.Environment.IsDevelopment())
+// configure HTTP request pipeline
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+    // global cors policy
+    app.UseCors(x => x
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
+
+    // global error handler
+    app.UseMiddleware<ErrorHandlerMiddleware>();
+
+    // custom jwt auth middleware
+    app.UseMiddleware<JwtMiddleware>();
+
+    app.MapControllers();
 }
 
-// Configure the HTTP request pipeline.
-app.UseCors(x => x
-    .AllowAnyOrigin()
-    .AllowAnyMethod()
-    .AllowAnyHeader());
-app.UseMiddleware<JwtMiddleware>();
-app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
-app.UseGraphQL<ISchema>("/graphql");            // url to host GraphQL endpoint
-app.UseGraphQLPlayground(
-    "/",                               // url to host Playground at
-    new GraphQL.Server.Ui.Playground.PlaygroundOptions
-    {
-        GraphQLEndPoint = "/graphql",         // url of GraphQL endpoint
-        SubscriptionsEndPoint = "/graphql",   // url of GraphQL endpoint
-    });
 app.Run();

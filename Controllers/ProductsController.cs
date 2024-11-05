@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MyWebApp.Data;
+using WebApi.Helpers;
 
-namespace MyWebApp.Controllers;
+namespace WebApi.Controllers;
 
 [ApiController]
 [Route("[controller]")]
 public class ProductsController : ControllerBase
 {
-    private readonly SalesContext _salesContext;
+    private readonly DataContext _salesContext;
 
-    public ProductsController (SalesContext salesContext)
+    public ProductsController (DataContext salesContext)
     {
         _salesContext = salesContext;
     }

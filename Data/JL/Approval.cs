@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyWebApp.Data
+namespace WebApi.Data
 {
     public class Approval
     {

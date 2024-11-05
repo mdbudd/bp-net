@@ -1,4 +1,4 @@
-namespace MyWebApp.Models;
+namespace WebApi.Models;
 
 public class BookStoreDatabaseSettings
 {

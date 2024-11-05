@@ -1,4 +1,4 @@
-namespace MyWebApp.Helpers;
+namespace WebApi.Helpers;
 
 using System.Globalization;
 

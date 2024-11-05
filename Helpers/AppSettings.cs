@@ -1,6 +1,8 @@
-namespace MyWebApp.Helpers;
+namespace WebApi.Helpers;
+using System.ComponentModel.DataAnnotations;
 
 public class AppSettings
 {
-    public string Secret { get; set; }
+    [Required]
+    public string Secret { get; set; } = null!;
 }

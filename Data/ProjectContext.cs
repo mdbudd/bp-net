@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace MyWebApp.Data
+namespace WebApi.Data
 {
     public class ProjectContext : DbContext
     {

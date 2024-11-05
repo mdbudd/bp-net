@@ -1,9 +1,10 @@
-﻿using MyWebApp.Models;
-using MyWebApp.Services;
+﻿using WebApi.Authorization;
+using WebApi.Models;
+using WebApi.Services;
 using Microsoft.AspNetCore.Mvc;
-using MyWebApp.Helpers;
+using WebApi.Helpers;
 
-namespace MyWebApp.Controllers;
+namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
