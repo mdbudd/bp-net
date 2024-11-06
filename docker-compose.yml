@@ -9,6 +9,7 @@ services:
       - "5000:80"
       - "5069:80"
     volumes:
+      - ./Authorization:/src/Authorization
       - ./Controllers:/src/Controllers
       - ./Data:/src/Data
       - ./Entities:/src/Entities

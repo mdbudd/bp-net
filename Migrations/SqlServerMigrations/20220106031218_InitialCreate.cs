@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
+using WebApi.Entities;
 
 #nullable disable
 
@@ -17,7 +18,7 @@ namespace WebApi.Migrations.SqlServerMigrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    // Role = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -32,7 +33,7 @@ namespace WebApi.Migrations.SqlServerMigrations
                 columns: new[] { "Id", "FirstName", "LastName", "Username", "Role", "PasswordHash" },
                 values: new object[,]
                 {
-                    { 1, "Test", "User", "test", "super", passwordHash }
+                    { 1, "Test", "User", "test", passwordHash }
                 });
         }
 

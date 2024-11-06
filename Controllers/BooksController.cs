@@ -3,6 +3,7 @@ using WebApi.Models;
 using WebApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Helpers;
+using WebApi.Entities;
 
 namespace WebApi.Controllers;
 

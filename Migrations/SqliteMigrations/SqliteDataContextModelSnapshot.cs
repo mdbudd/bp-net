@@ -34,8 +34,8 @@ namespace WebApi.Migrations.SqliteMigrations
                     b.Property<string>("Username")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Role")
-                        .HasColumnType("TEXT");
+                    // b.Property<string>("Role")
+                    //     .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
