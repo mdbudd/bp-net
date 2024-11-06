@@ -2,7 +2,7 @@ namespace WebApi.Entities;
 
 public enum Role
 {
-    Super,
-    Admin,
-    User
+    Super = 0,
+    Admin = 1,
+    User = 2
 }

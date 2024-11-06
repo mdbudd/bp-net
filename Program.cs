@@ -5,6 +5,7 @@ using WebApi.Authorization;
 using WebApi.Entities;
 using WebApi.Helpers;
 using WebApi.Services;
+// using WebApi.Data;
 using WebApi.Models;
 using Microsoft.OpenApi.Models;
 using GraphQL;
@@ -76,6 +77,14 @@ var builder = WebApplication.CreateBuilder(args);
     // configure DI for application services
     services.AddScoped<IJwtUtils, JwtUtils>();
     services.AddScoped<IUserService, UserService>();
+
+    services.AddSingleton<IEmployeeService, EmployeeService>();
+    services.AddSingleton<EmployeeDetailsType>();
+    services.AddSingleton<EmployeeQuery>();
+    services.AddSingleton<ISchema, EmployeeDetailsSchema>();
+    services.AddGraphQL(b => b
+        .AddAutoSchema<EmployeeQuery>()  // schema
+        .AddSystemTextJson());   // serializer
 }
 
 var app = builder.Build();
@@ -102,21 +111,34 @@ var app = builder.Build();
     app.UseMiddleware<JwtMiddleware>();
 
     app.MapControllers();
+    app.UseGraphQL<ISchema>("/graphql");            // url to host GraphQL endpoint
+    app.UseGraphQLPlayground(
+        "/",                               // url to host Playground at
+        new GraphQL.Server.Ui.Playground.PlaygroundOptions
+        {
+            GraphQLEndPoint = "/graphql",         // url of GraphQL endpoint
+            SubscriptionsEndPoint = "/graphql",   // url of GraphQL endpoint
+        });
 }
 
 // migrate any database changes on startup (includes initial db creation)
 using (var scope = app.Services.CreateScope())
 {
-    // var testUsers = new List<User>
-    // {
-    //     new User { Id = 1, FirstName = "Admin", LastName = "User", Username = "admin", PasswordHash = BCryptNet.HashPassword("admin"), Role = Role.Admin },
-    //     new User { Id = 2, FirstName = "Normal", LastName = "User", Username = "user", PasswordHash = BCryptNet.HashPassword("user"), Role = Role.User }
-    // };
+
     var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
-    
+
     dataContext.Database.Migrate();
-    // dataContext.Users.AddRange(testUsers);
-    // dataContext.SaveChanges();
+    if (!dataContext.Users.Any())
+    {
+        var testUsers = new List<User>
+        {
+            new User { FirstName = "Super", LastName = "User", Username = "super", PasswordHash = BCryptNet.HashPassword("super"), Role = Role.Super },
+            new User { FirstName = "Admin", LastName = "User", Username = "admin", PasswordHash = BCryptNet.HashPassword("admin"), Role = Role.Admin },
+            new User { FirstName = "Normal", LastName = "User", Username = "user", PasswordHash = BCryptNet.HashPassword("user"), Role = Role.User }
+        };
+        dataContext.Users.AddRange(testUsers);
+        dataContext.SaveChanges();
+    }
 }
 
 app.Run();
