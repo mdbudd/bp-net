@@ -18,7 +18,7 @@ namespace WebApi.Migrations.SqlServerMigrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    // Role = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Role = table.Column<int>(type: "int", nullable: true),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -26,15 +26,15 @@ namespace WebApi.Migrations.SqlServerMigrations
                     table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
-            string passwordHash = BCrypt.Net.BCrypt.HashPassword("test");
+            // string passwordHash = BCrypt.Net.BCrypt.HashPassword("test");
 
-            migrationBuilder.InsertData(
-                table: "Users",
-                columns: new[] { "Id", "FirstName", "LastName", "Username", "Role", "PasswordHash" },
-                values: new object[,]
-                {
-                    { 1, "Test", "User", "test", passwordHash }
-                });
+            // migrationBuilder.InsertData(
+            //     table: "Users",
+            //     columns: new[] { "Id", "FirstName", "LastName", "Username", "PasswordHash" },
+            //     values: new object[,]
+            //     {
+            //         { 1, "Test", "User", "test", passwordHash }
+            //     });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

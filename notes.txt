@@ -14,3 +14,6 @@ dotnet ef migrations add InitialCreate --context DataContext --output-dir Migrat
   "username": "test",
   "password": "****"
 }
+/opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P 'A&VeryComplex123Password' -C
+select physical_database_name from sys.databases
+select * from [SalesDb].[dbo].[Users]

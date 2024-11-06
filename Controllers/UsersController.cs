@@ -5,10 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using WebApi.Authorization;
 using WebApi.Helpers;
+using WebApi.Entities;
 using WebApi.Models.Users;
 using WebApi.Services;
 
-// [Authorize]
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class UsersController : ControllerBase
@@ -43,6 +44,7 @@ public class UsersController : ControllerBase
         return Ok(new { message = "Registration successful" });
     }
 
+    [Authorize(Role.Super)]
     [HttpGet]
     public IActionResult GetAll()
     {

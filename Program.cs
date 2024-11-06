@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using BCryptNet = BCrypt.Net.BCrypt;
 using System.Text.Json.Serialization;
 using WebApi.Authorization;
 using WebApi.Entities;
@@ -79,13 +80,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 
-// migrate any database changes on startup (includes initial db creation)
-using (var scope = app.Services.CreateScope())
-{
-    var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
-    
-    dataContext.Database.Migrate();
-}
 
 // configure HTTP request pipeline
 {
@@ -108,6 +102,21 @@ using (var scope = app.Services.CreateScope())
     app.UseMiddleware<JwtMiddleware>();
 
     app.MapControllers();
+}
+
+// migrate any database changes on startup (includes initial db creation)
+using (var scope = app.Services.CreateScope())
+{
+    // var testUsers = new List<User>
+    // {
+    //     new User { Id = 1, FirstName = "Admin", LastName = "User", Username = "admin", PasswordHash = BCryptNet.HashPassword("admin"), Role = Role.Admin },
+    //     new User { Id = 2, FirstName = "Normal", LastName = "User", Username = "user", PasswordHash = BCryptNet.HashPassword("user"), Role = Role.User }
+    // };
+    var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+    
+    dataContext.Database.Migrate();
+    // dataContext.Users.AddRange(testUsers);
+    // dataContext.SaveChanges();
 }
 
 app.Run();
