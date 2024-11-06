@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using WebApi.Authorization;
-using WebApi.Data;
+using WebApi.Entities;
 using WebApi.Helpers;
 using WebApi.Services;
 using WebApi.Models;
@@ -20,12 +21,16 @@ var builder = WebApplication.CreateBuilder(args);
         services.AddDbContext<DataContext>();
     else
         services.AddDbContext<DataContext>(); // using sql server for both as docker is running it.
-        // services.AddDbContext<DataContext, SqliteDataContext>();
+                                              // services.AddDbContext<DataContext, SqliteDataContext>();
 
     // services.AddDbContext<ProjectContext>(options =>
     //     options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectDb")));
     services.AddCors();
-    services.AddControllers();
+    services.AddControllers().AddJsonOptions(x =>
+    {
+        // serialize enums as strings in api responses (e.g. Role)
+        x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     services.AddEndpointsApiExplorer();
@@ -78,6 +83,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+    
     dataContext.Database.Migrate();
 }
 
