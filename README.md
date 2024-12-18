@@ -36,4 +36,4 @@ GraphQL endpoint is located at `http://localhost:5069/graphql`. If you navigate 
 
 ## JWT Authentication
 
-There is also a rudimentary Authentication system setup. There is currently a user hard coded into the `UserService`. Users could be stored in the database as an enhancement.
+There is also a rudimentary Authentication system setup. Initial Users (connected via the `UserService`) are currently stored in the MS Sql/SQLite databases & seeded during build for development purposes.
