@@ -17,3 +17,7 @@ dotnet ef migrations add InitialCreate --context DataContext --output-dir Migrat
 /opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P 'A&VeryComplex123Password' -C
 select physical_database_name from sys.databases
 select * from [SalesDb].[dbo].[Users]
+
+
+docker exec mongo sh -c 'mongodump --archive --authenticationDatabase admin -u uzer -p pazzwurd --db test > backup'
+docker exec -i mongo sh -c 'mongorestore --authenticationDatabase admin -u uzer -p pazzwurd --nsInclude="test.*" --nsFrom="test.*" --nsTo="my-payload.*" --archive=backup'
