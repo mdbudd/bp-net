@@ -5,14 +5,15 @@ using WebApi.Authorization;
 using WebApi.Entities;
 using WebApi.Helpers;
 using WebApi.Services;
-// using WebApi.Data;
+using WebApi.Data;
 using WebApi.Models;
 using Microsoft.OpenApi.Models;
 using GraphQL;
 using GraphQL.Types;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 // add services to DI container
 {
     var services = builder.Services;
@@ -138,6 +139,10 @@ using (var scope = app.Services.CreateScope())
         };
         dataContext.Users.AddRange(testUsers);
         dataContext.SaveChanges();
+    }
+    if (!dataContext.Products.Any())
+    {
+        dataContext.Seed();
     }
 }
 

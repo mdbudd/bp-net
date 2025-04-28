@@ -48,6 +48,35 @@ namespace WebApi.Migrations.SqlServerMigrations
 
                     b.ToTable("Users");
                 });
+            modelBuilder.Entity("WebApi.Data.Product", b =>
+         {
+             b.Property<int>("ProductId")
+                 .ValueGeneratedOnAdd()
+                 .HasColumnType("int");
+
+             SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"), 1L, 1);
+
+             b.Property<string>("Name")
+                 .HasColumnType("nvarchar(max)");
+
+             b.Property<string>("ProductCategory")
+                 .HasColumnType("int");
+
+             b.Property<string>("Description")
+                 .HasColumnType("nvarchar(max)");
+
+             b.Property<string>("Price")
+                 .HasColumnType("decimal(5, 2)");
+
+             b.Property<int>("SKU")
+                 .HasColumnType("nvarchar(max)");
+             b.Property<int>("Code")
+                 .HasColumnType("nvarchar(max)");
+
+             b.HasKey("ProductId");
+
+             b.ToTable("Products");
+         });
 #pragma warning restore 612, 618
         }
     }

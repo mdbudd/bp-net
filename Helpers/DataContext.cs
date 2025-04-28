@@ -19,8 +19,8 @@ public class DataContext : DbContext
         options.UseSqlServer(Configuration.GetConnectionString("WebApiDatabase"));
     }
 
-    public DbSet<User> Users { get; set; }
-    public DbSet<Product>? Products { get; set; }
+    public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Product> Products { get; set; } = null!;
     public DbSet<EntityType>? EntityTypes { get; set; }
     public DbSet<Approval>? Approvals { get; set; }
 }
