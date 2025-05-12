@@ -43,6 +43,35 @@ namespace WebApi.Migrations.SqliteMigrations
 
                     b.ToTable("Users");
                 });
+            modelBuilder.Entity("WebApi.Data.Product", b =>
+         {
+             b.Property<int>("ProductId")
+                 .ValueGeneratedOnAdd()
+                 .HasColumnType("INTEGER");
+
+             SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"), 1L, 1);
+
+             b.Property<string>("Name")
+                 .HasColumnType("TEXT");
+
+             b.Property<int>("ProductCategory")
+                 .HasColumnType("INTEGER");
+
+             b.Property<string>("Description")
+                 .HasColumnType("TEXT");
+
+             b.Property<decimal>("Price")
+                 .HasColumnType("INTEGER");
+
+             b.Property<string>("SKU")
+                 .HasColumnType("TEXT");
+             b.Property<string>("Code")
+                 .HasColumnType("TEXT");
+
+             b.HasKey("ProductId");
+
+             b.ToTable("Products");
+         });
 #pragma warning restore 612, 618
         }
     }

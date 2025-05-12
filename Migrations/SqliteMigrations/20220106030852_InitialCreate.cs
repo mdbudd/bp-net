@@ -34,6 +34,24 @@ namespace WebApi.Migrations.SqliteMigrations
             //     {
             //         { 1, "Test", "User", "test", Role.Super, passwordHash }
             //     });
+            
+            migrationBuilder.CreateTable(
+                 name: "Products",
+                 columns: table => new
+                 {
+                     ProductId = table.Column<int>(type: "INTEGER", nullable: false)
+                      .Annotation("Sqlite:Autoincrement", true),
+                     Name = table.Column<string>(type: "TEXT", nullable: true),
+                     ProductCategory = table.Column<int>(type: "INTEGER", nullable: true),
+                     Description = table.Column<string>(type: "TEXT", nullable: true),
+                     Price = table.Column<decimal>(type: "INTEGER", nullable: true),
+                     SKU = table.Column<string>(type: "TEXT", nullable: true),
+                     Code = table.Column<string>(type: "TEXT", nullable: true)
+                 },
+                 constraints: table =>
+                 {
+                     table.PrimaryKey("PK_Products", x => x.ProductId);
+                 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
